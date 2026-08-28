@@ -1,0 +1,181 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>SAMA DIGI Web App</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      background: #ffffff;
+    }
+
+    .app-wrapper {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .app-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+
+      border: 0;
+      margin: 0;
+      padding: 0;
+
+      display: block;
+      overflow: hidden;
+
+      /* Mencegah iframe membuat halaman wrapper melebar */
+      max-width: 100%;
+    }
+
+    /* Loading */
+    .loading {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #ffffff;
+
+      transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+    }
+
+    .loading.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader {
+      width: 40px;
+      height: 40px;
+
+      border: 4px solid #e5e7eb;
+      border-top-color: #111827;
+
+      border-radius: 50%;
+
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+
+      .app-wrapper {
+        height: 100dvh;
+      }
+
+      .app-frame {
+        width: 100%;
+        height: 100dvh;
+      }
+    }
+
+    /* Safe area untuk HP dengan notch */
+    @supports (padding: env(safe-area-inset-bottom)) {
+      .app-wrapper {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      .app-frame {
+        height: calc(100dvh - env(safe-area-inset-bottom));
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-wrapper">
+
+    <div class="loading" id="loading">
+      <div class="loader"></div>
+    </div>
+
+    <iframe
+      class="app-frame"
+      id="appFrame"
+      src="https://script.google.com/macros/s/AKfycbzNU1W_4-7dUnSLku3UopRVfrwcorZ4VaDY2Cd9a_I4M1SExTAywxGHMPm9iqlIgMHP/exec"
+      allow="camera; microphone; geolocation; fullscreen; clipboard-read; clipboard-write"
+      allowfullscreen>
+    </iframe>
+
+  </div>
+
+  <script>
+    const iframe = document.getElementById("appFrame");
+    const loading = document.getElementById("loading");
+
+    iframe.addEventListener("load", function () {
+      setTimeout(() => {
+        loading.classList.add("hidden");
+      }, 300);
+    });
+
+    /*
+     * Pastikan wrapper selalu mengikuti ukuran viewport terbaru.
+     * Berguna ketika keyboard HP muncul / menghilang
+     * atau ketika orientasi layar berubah.
+     */
+    function updateViewport() {
+      const wrapper = document.querySelector(".app-wrapper");
+      const frame = document.querySelector(".app-frame");
+
+      const height = window.visualViewport
+        ? window.visualViewport.height
+        : window.innerHeight;
+
+      wrapper.style.height = height + "px";
+      frame.style.height = height + "px";
+    }
+
+    updateViewport();
+
+    window.addEventListener("resize", updateViewport);
+    window.addEventListener("orientationchange", updateViewport);
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", updateViewport);
+    }
+  </script>
+
+</body>
+</html>
+```
