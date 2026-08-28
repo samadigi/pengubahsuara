@@ -1,31 +1,2081 @@
 <!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Voice Changer AI — Studio Suara & Audio FX</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Config Custom Colors -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              lime: '#B6FF00',
+              neon: '#8EFF00',
+              emerald: '#22C55E',
+              dark: '#0B0F19',
+              darker: '#06080F',
+              card: '#111827',
+              border: '#1F2937'
+            }
+          }
+        }
+      }
+    }
+  </script>
 
-<html lang="id"> <head> <meta charset="UTF-8">
+  <style>
+    /* Gradient Text Highlight */
+    .green-gradient-text {
+      background: linear-gradient(135deg, #B6FF00 0%, #8EFF00 50%, #22C55E 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .green-gradient-bg {
+      background: linear-gradient(135deg, #B6FF00 0%, #8EFF00 50%, #22C55E 100%);
+    }
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    /* Moving Border Light Effect (Continuous Loop) */
+    @keyframes spinBorder {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
+    .moving-border-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.5rem;
+      padding: 2px;
+      z-index: 1;
+    }
 
+    .moving-border-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(transparent, #B6FF00 20%, #8EFF00 40%, transparent 60%, #22C55E 80%, transparent 100%);
+      animation: spinBorder 6s linear infinite;
+      z-index: -2;
+    }
 
+    .moving-border-inner {
+      background: #0B0F19;
+      border-radius: calc(1.5rem - 2px);
+      height: 100%;
+      width: 100%;
+      z-index: -1;
+    }
 
-<title>Voice Changer AI</title>
+    .light .moving-border-inner {
+      background: #FFFFFF;
+    }
 
-<style> * { box-sizing: border-box; } html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #06080F; } .wrapper { position: fixed; inset: 0; width: 100%; height: 100dvh; overflow: hidden; } iframe { display: block; width: 100%; height: 100%; border: 0; margin: 0; padding: 0; } </style>
+    /* Double Layer Green Accent Outline */
+    .hero-card-container {
+      position: relative;
+      perspective: 1000px;
+    }
 
+    .accent-outline-layer {
+      position: absolute;
+      inset: -6px;
+      border-radius: 1.75rem;
+      border: 2px solid rgba(182, 255, 0, 0.4);
+      box-shadow: 0 0 25px rgba(142, 255, 0, 0.25);
+      pointer-events: none;
+      transform: rotate(3deg) scale(1.02);
+      transition: all 0.3s ease;
+      z-index: 0;
+    }
+
+    /* Static Default Tilt for Large Hero Card */
+    .hero-main-card {
+      transform: rotate(-2deg);
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+      z-index: 10;
+    }
+
+    /* Cursor Spotlight Radial Light */
+    #cursorSpotlight {
+      pointer-events: none;
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(182, 255, 0, 0.15) 0%, rgba(34, 197, 94, 0.05) 50%, transparent 75%);
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease;
+      z-index: 2;
+    }
+
+    .light #cursorSpotlight {
+      background: radial-gradient(circle, rgba(142, 255, 0, 0.2) 0%, rgba(34, 197, 94, 0.05) 50%, transparent 75%);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #22C55E;
+      border-radius: 9999px;
+    }
+
+    /* Recording Pulse Animation */
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .recording-pulse {
+      animation: pulseRing 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+
+    /* Range Slider Styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: rgba(156, 163, 175, 0.2);
+      height: 8px;
+      border-radius: 4px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #B6FF00;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(182, 255, 0, 0.8);
+      border: 2px solid #06080F;
+    }
+  </style>
 </head>
 
-<body>
+<body class="bg-[#06080F] text-slate-100 min-h-screen font-sans selection:bg-[#B6FF00] selection:text-black transition-colors duration-300">
 
-<div class="wrapper">
+  <!-- ==================== NOTIFICATION TOAST ==================== -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
-<iframe
-  src="https://script.google.com/macros/s/AKfycbzNU1W_4-7dUnSLku3UopRVfrwcorZ4VaDY2Cd9a_I4M1SExTAywxGHMPm9iqlIgMHP/exec"
-  allow="microphone *; camera *; geolocation *; autoplay *"
-  allowfullscreen
-  referrerpolicy="strict-origin-when-cross-origin">
-</iframe>
+  <!-- ==================== MAIN NAVBAR ==================== -->
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-[#06080F]/80 dark:bg-[#06080F]/80 light:bg-white/80 border-b border-white/10 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <!-- Brand / Logo -->
+      <a href="javascript:void(0)" onclick="navigateTo('landing')" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B6FF00] to-[#22C55E] p-0.5 shadow-lg shadow-[#B6FF00]/20 flex items-center justify-center">
+          <div class="w-full h-full bg-[#0B0F19] rounded-[10px] flex items-center justify-center overflow-hidden" id="navLogoContainer">
+            <span class="text-xl">🎙️</span>
+          </div>
+        </div>
+        <div>
+          <span class="font-extrabold text-lg tracking-tight block leading-tight text-white dark:text-white light:text-slate-900 group-hover:text-[#B6FF00] transition">
+            VOICE <span class="green-gradient-text">CHANGER</span> AI
+          </span>
+          <span class="text-[10px] uppercase font-semibold tracking-wider text-emerald-400 block -mt-0.5">Studio DSP FX</span>
+        </div>
+      </a>
 
-</div>
+      <!-- Action Buttons (Studio / Login / Theme) -->
+      <div class="flex items-center gap-2">
+        <!-- Mode Studio Quick Switch -->
+        <button onclick="navigateTo('studio')" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#B6FF00] to-[#22C55E] text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-md shadow-[#B6FF00]/25 hover:opacity-95 active:scale-95 transition">
+          <span>⚡</span>
+          <span>Buka Studio</span>
+        </button>
 
-</body> </html>
+        <!-- Dark / Light Toggle -->
+        <button onclick="toggleTheme()" class="p-2.5 rounded-xl border border-white/10 dark:border-white/10 light:border-slate-300 bg-white/5 dark:bg-white/5 light:bg-slate-100 hover:bg-white/10 transition text-sm" title="Ubah Mode Tampilan">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        <!-- Auth Button -->
+        <div id="navAuthBtn">
+          <button onclick="openLoginModal()" class="px-3 py-2 rounded-xl border border-white/15 dark:border-white/15 light:border-slate-300 bg-white/5 hover:bg-white/10 font-semibold text-xs transition text-white dark:text-white light:text-slate-900">
+            Masuk
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== VIEW CONTAINER ==================== -->
+  <main class="relative min-h-[calc(100vh-140px)]">
+
+    <!-- ---------------------------------------------------- -->
+    <!-- VIEW 1: PRE-LOGIN LANDING PAGE (DEFAULT) -->
+    <!-- ---------------------------------------------------- -->
+    <section id="viewLanding" class="relative overflow-hidden py-8 sm:py-16">
+      
+      <!-- Background Ambient Glow & Spotlight Area -->
+      <div id="heroSection" class="relative max-w-6xl mx-auto px-4">
+        <div id="cursorSpotlight" class="opacity-0 md:opacity-100"></div>
+
+        <!-- Split Hero Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          <!-- SISI KIRI: Headline & CTA (45%) -->
+          <div class="lg:col-span-6 flex flex-col items-start text-left z-10">
+            
+            <!-- Status Badge -->
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#B6FF00]/10 border border-[#B6FF00]/30 text-[#B6FF00] text-xs font-bold mb-5 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-[#B6FF00] animate-ping"></span>
+              <span>100% Mobile Audio Engine Realtime</span>
+            </div>
+
+            <!-- Headline Utama + Green Gradient Accent Headline -->
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white dark:text-white light:text-slate-900 leading-[1.15] mb-4">
+              Ubah Karakter Suara Anda Seketika dengan 
+              <span class="green-gradient-text block mt-1">Voice Changer AI Studio</span>
+            </h1>
+
+            <p class="text-slate-300 dark:text-slate-300 light:text-slate-600 text-sm sm:text-base leading-relaxed mb-6 max-w-lg">
+              Rekam suara langsung dari HP Anda, terapkan 10 preset karakter unik (Robot, Chipmunk, Suara Pria/Wanita, Deep Bass), atur equalizer presisi, dan unduh format audio WAV jernih tanpa batas.
+            </p>
+
+            <!-- Primary & Secondary CTA Buttons -->
+            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              <button onclick="navigateTo('studio')" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#B6FF00] via-[#8EFF00] to-[#22C55E] text-slate-950 font-extrabold text-sm sm:text-base shadow-xl shadow-[#B6FF00]/30 hover:shadow-[#B6FF00]/50 hover:scale-[1.02] active:scale-95 transition flex items-center justify-center gap-2">
+                <span class="text-lg">🎙️</span>
+                <span>Mulai Rekam Suara Sekarang</span>
+              </button>
+
+              <button onclick="scrollToFeatures()" class="w-full sm:w-auto px-5 py-3.5 rounded-2xl border border-white/20 dark:border-white/20 light:border-slate-300 bg-white/5 hover:bg-white/10 text-white dark:text-white light:text-slate-800 font-bold text-sm transition flex items-center justify-center gap-2">
+                <span>Lihat 10 Efek Suara</span>
+                <span>↓</span>
+              </button>
+            </div>
+
+            <!-- Trust Indicator -->
+            <div class="mt-8 flex items-center gap-4 text-xs text-slate-400">
+              <div class="flex -space-x-2">
+                <span class="w-8 h-8 rounded-full bg-emerald-500/30 border border-emerald-400 flex items-center justify-center text-xs font-bold text-emerald-300">HP</span>
+                <span class="w-8 h-8 rounded-full bg-lime-500/30 border border-lime-400 flex items-center justify-center text-xs font-bold text-lime-300">WAV</span>
+                <span class="w-8 h-8 rounded-full bg-teal-500/30 border border-teal-400 flex items-center justify-center text-xs font-bold text-teal-300">DSP</span>
+              </div>
+              <span>Diproses langsung di browser HP tanpa jeda</span>
+            </div>
+          </div>
+
+          <!-- SISI KANAN: Large Tilted Rounded Hero Card + Double Accent Outline (55%) -->
+          <div class="lg:col-span-6 relative flex justify-center py-6">
+            <div class="hero-card-container w-full max-w-md">
+              
+              <!-- Double-Layer Green Accent Outline -->
+              <div class="accent-outline-layer"></div>
+
+              <!-- Main Hero Card (Large, Tilted, Moving Border) -->
+              <div id="heroInteractiveCard" class="hero-main-card moving-border-wrapper shadow-2xl">
+                <div class="moving-border-inner p-6 sm:p-7 relative flex flex-col gap-5">
+                  
+                  <!-- Card Header -->
+                  <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                    <div class="flex items-center gap-2.5">
+                      <span class="p-2 rounded-xl bg-[#B6FF00]/20 text-[#B6FF00] text-lg font-bold">🎙️</span>
+                      <div>
+                        <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Live Voice Modifier</h4>
+                        <p class="text-[11px] text-emerald-400 font-semibold">Web Audio 64-bit Synthesizer</p>
+                      </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#B6FF00]/15 text-[#B6FF00] border border-[#B6FF00]/30">
+                      LIVE DSP
+                    </span>
+                  </div>
+
+                  <!-- Visual Waveform Simulator -->
+                  <div class="bg-slate-950/80 rounded-xl p-4 border border-white/10 flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-[11px] text-slate-400 font-mono">
+                      <span>SPECTRUM ANALYZER</span>
+                      <span class="text-[#B6FF00]">44.1 kHz / 16-Bit</span>
+                    </div>
+                    <!-- Animated Bar Simulator -->
+                    <div class="h-16 flex items-end justify-between gap-1 pt-2">
+                      <div class="w-full bg-gradient-to-t from-emerald-500 to-[#B6FF00] rounded-t h-[40%] animate-pulse"></div>
+                      <div class="w-full bg-gradient-to-t from-emerald-500 to-[#B6FF00] rounded-t h-[75%] animate-pulse" style="animation-delay: 0.1s"></div>
+                      <div class="w-full bg-gradient-to-t from-emerald-500 to-[#B6FF00] rounded-t h-[95%] animate-pulse" style="animation-delay: 0.2s"></div>
+                      <div class="w-full bg-gradient-to-t from-emerald-500 to-[#B6FF00] rounded-t h-[60%] animate-pulse" style="animation-delay: 0.15s"></div>
+                      <div class="w-full bg-gradient-to-t from-emerald-500 to-[#B6FF00] rounded-t h-[85%] animate-pulse" style="animation-delay: 0.25s"></div>
+                      <div class="w-full bg-gradient-to-t from-emerald-500 to-[#B6FF00] rounded-t h-[50%] animate-pulse" style="animation-delay: 0.05s"></div>
+                      <div class="w-full bg-gradient-to-t from-emerald-500 to-[#B6FF00] rounded-t h-[90%] animate-pulse" style="animation-delay: 0.3s"></div>
+                      <div class="w-full bg-gradient-to-t from-emerald-500 to-[#B6FF00] rounded-t h-[65%] animate-pulse" style="animation-delay: 0.18s"></div>
+                    </div>
+                  </div>
+
+                  <!-- Quick Preset Icons Grid Preview -->
+                  <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                    <div class="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#B6FF00] transition">
+                      <span class="text-base block">🤖</span>
+                      <span class="text-[9px] text-slate-300">Robot</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#B6FF00] transition">
+                      <span class="text-base block">🐿️</span>
+                      <span class="text-[9px] text-slate-300">Chipmunk</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#B6FF00] transition">
+                      <span class="text-base block">👨</span>
+                      <span class="text-[9px] text-slate-300">Pria</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#B6FF00] transition">
+                      <span class="text-base block">👩</span>
+                      <span class="text-[9px] text-slate-300">Wanita</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#B6FF00] transition">
+                      <span class="text-base block">👹</span>
+                      <span class="text-[9px] text-slate-300">Monster</span>
+                    </div>
+                  </div>
+
+                  <!-- Action Button on Hero -->
+                  <button onclick="navigateTo('studio')" class="w-full py-3 rounded-xl bg-gradient-to-r from-[#B6FF00] to-[#22C55E] text-slate-950 font-black text-sm tracking-wide flex items-center justify-center gap-2 hover:opacity-95 transition">
+                    <span>⚡ BUKA STUDIO PENGUBAH SUARA</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Floating Info Card 1 (Top Left Overlap) -->
+              <div class="absolute -top-4 -left-4 sm:-left-6 p-3 rounded-2xl bg-slate-900/95 dark:bg-slate-900/95 light:bg-white/95 border border-[#B6FF00]/40 shadow-xl backdrop-blur-md flex items-center gap-2.5 z-20">
+                <span class="p-2 rounded-xl bg-[#B6FF00]/20 text-[#B6FF00] text-sm">✓</span>
+                <div>
+                  <div class="text-xs font-black text-white dark:text-white light:text-slate-900">Zero Server Delay</div>
+                  <div class="text-[10px] text-slate-400">Audio DSP Instan di HP</div>
+                </div>
+              </div>
+
+              <!-- Floating Info Card 2 (Bottom Right Overlap) -->
+              <div class="absolute -bottom-5 -right-3 sm:-right-5 p-3 rounded-2xl bg-slate-900/95 dark:bg-slate-900/95 light:bg-white/95 border border-[#22C55E]/40 shadow-xl backdrop-blur-md flex items-center gap-2.5 z-20">
+                <span class="p-2 rounded-xl bg-[#22C55E]/20 text-[#22C55E] text-sm">📥</span>
+                <div>
+                  <div class="text-xs font-black text-white dark:text-white light:text-slate-900">Studio WAV Export</div>
+                  <div class="text-[10px] text-slate-400">Download Gratis & Jernih</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FEATURES SHOWCASE SECTION -->
+      <div id="featuresSection" class="max-w-6xl mx-auto px-4 mt-24">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 mb-3">
+            10 Karakter Suara & Kontrol Equalizer Penuh
+          </h2>
+          <p class="text-slate-400 text-xs sm:text-sm">
+            Eksplorasi beragam efek modulasi audio profesional langsung dalam genggaman ponsel Anda.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">🎙️</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Suara Normal</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Audio asli rekaman mic Anda tanpa filter.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">👨</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Suara Pria</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Pitch diturunkan dengan kehangatan resonansi bass.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">👩</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Suara Wanita</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Pitch tinggi lembut dengan treble yang diperjelas.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">👶</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Suara Anak</h4>
+            <p class="text-[11px] text-slate-400 mt-1">High pitch yang ceria, imut, dan ekspresif.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">🤖</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Suara Robot</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Modulasi ring & efek vibrato mekanikal futuristik.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">🔊</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Deep / Sub-Bass</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Penekanan frekuensi rendah untuk suara menggelegar.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">🐿️</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Chipmunk</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Ultra high pitch ala tupai kartun yang lucu.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">👹</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Monster / Demon</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Distorsi berat + nada rendah menakutkan.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">🌌</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Echo / Cave</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Pantulan gema ruangan luas berulang.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 hover:border-[#B6FF00] transition group">
+            <span class="text-3xl mb-2 block group-hover:scale-110 transition">📻</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Radio HT</h4>
+            <p class="text-[11px] text-slate-400 mt-1">Efek suara bandpass lo-fi walkie-talkie klasik.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- HOW IT WORKS SECTION -->
+      <div class="max-w-4xl mx-auto px-4 mt-24 text-center">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 mb-8">
+          Hanya 4 Langkah Mudah di Ponsel Anda
+        </h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-left">
+          <div class="p-5 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 flex flex-col gap-2">
+            <span class="w-8 h-8 rounded-xl bg-[#B6FF00] text-black font-black flex items-center justify-center text-sm">1</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Tekan Rekam</h4>
+            <p class="text-xs text-slate-400">Bicara melalui mic HP dan lihat gelombang audio realtime.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 flex flex-col gap-2">
+            <span class="w-8 h-8 rounded-xl bg-[#8EFF00] text-black font-black flex items-center justify-center text-sm">2</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Pilih Karakter</h4>
+            <p class="text-xs text-slate-400">Pilih 1 dari 10 preset atau geser slider equalizer.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 flex flex-col gap-2">
+            <span class="w-8 h-8 rounded-xl bg-[#22C55E] text-black font-black flex items-center justify-center text-sm">3</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Preview Hasil</h4>
+            <p class="text-xs text-slate-400">Dengarkan perubahan suara Anda secara instan tanpa lag.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 flex flex-col gap-2">
+            <span class="w-8 h-8 rounded-xl bg-white text-black font-black flex items-center justify-center text-sm">4</span>
+            <h4 class="font-bold text-sm text-white dark:text-white light:text-slate-900">Download WAV</h4>
+            <p class="text-xs text-slate-400">Simpan langsung ke galeri file audio HP Anda.</p>
+          </div>
+        </div>
+
+        <!-- Final CTA Banner -->
+        <div class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-emerald-950/60 via-[#0B0F19] to-lime-950/60 border border-[#B6FF00]/30 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div class="text-left">
+            <h3 class="text-xl font-extrabold text-white">Siap Mengubah Suara Anda?</h3>
+            <p class="text-slate-400 text-xs mt-1">Gratis, cepat, dan tanpa perlu install aplikasi pihak ketiga.</p>
+          </div>
+          <button onclick="navigateTo('studio')" class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#B6FF00] to-[#22C55E] text-black font-extrabold text-sm shadow-xl shadow-[#B6FF00]/30 hover:scale-105 active:scale-95 transition">
+            Buka Studio Perekam 🚀
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- VIEW 2: VOICE CHANGER STUDIO (MOBILE-FIRST) -->
+    <!-- ---------------------------------------------------- -->
+    <section id="viewStudio" class="hidden max-w-3xl mx-auto px-4 py-6 sm:py-8">
+      
+      <!-- Studio Header & Navigation Back -->
+      <div class="flex items-center justify-between mb-5">
+        <button onclick="navigateTo('landing')" class="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-white transition px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+          <span>←</span>
+          <span>Kembali ke Beranda</span>
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button onclick="checkAndRequestMicPermission()" id="micStatusBadge" class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-800 text-slate-300 border border-white/10 flex items-center gap-1.5 hover:border-white/30 transition" title="Klik untuk cek status mikrofon">
+            <span class="w-2 h-2 rounded-full bg-slate-500" id="micStatusDot"></span>
+            <span id="micStatusText">Mic Siap</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Permission Warning Alert Banner (Tampil Otomatis saat Diblokir) -->
+      <div id="micDeniedBanner" class="hidden mb-5 p-4 rounded-2xl bg-red-950/40 border border-red-500/50 backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <span class="p-2 rounded-xl bg-red-500/20 text-red-400 text-lg">⚠️</span>
+          <div>
+            <h4 class="font-bold text-xs sm:text-sm text-red-200">Akses Mikrofon Ditolak Browser</h4>
+            <p class="text-[11px] text-slate-300 mt-0.5">Izin mic diblokir oleh setelan browser atau preview sandbox. Anda tetap dapat menggunakan fitur dengan contoh suara atau upload file audio.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button onclick="openMicHelpModal()" class="flex-1 sm:flex-none px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition">
+            Bantuan Izin ⚙️
+          </button>
+          <button onclick="loadDemoSampleAudio()" class="flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl bg-[#B6FF00] hover:bg-[#8EFF00] text-slate-950 font-extrabold text-xs shadow-md transition">
+            Gunakan Sampel 🎙️
+          </button>
+        </div>
+      </div>
+
+      <!-- AUDIO RECORDING CARD (TOUCH-FRIENDLY) -->
+      <div class="rounded-3xl bg-[#0B0F19] dark:bg-[#0B0F19] light:bg-white border border-white/15 dark:border-white/15 light:border-slate-200 p-5 sm:p-7 shadow-2xl relative overflow-hidden mb-6">
+        
+        <!-- Live Waveform & Visualizer Canvas -->
+        <div class="relative w-full h-32 sm:h-40 bg-slate-950 rounded-2xl overflow-hidden border border-white/10 flex items-center justify-center mb-5">
+          <canvas id="visualizerCanvas" class="w-full h-full block"></canvas>
+          
+          <!-- Timer Display Floating on Canvas -->
+          <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-xl border border-white/10 font-mono text-xs sm:text-sm font-bold text-[#B6FF00] flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500 hidden" id="recIndicatorDot"></span>
+            <span id="timerDisplay">00:00</span>
+          </div>
+
+          <!-- Helper Canvas Overlay when empty -->
+          <div id="canvasEmptyPrompt" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4 pointer-events-none">
+            <span class="text-2xl mb-1 opacity-75">🎙️</span>
+            <span class="text-xs text-slate-400 font-medium">Tekan tombol "Mulai Rekam" atau Upload Audio</span>
+          </div>
+        </div>
+
+        <!-- MAIN ACTION BUTTONS (MOBILE LARGE TOUCH TARGETS) -->
+        <div class="flex flex-col gap-3">
+          
+          <!-- Primary Record / Stop Big Button -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button id="btnRecordToggle" onclick="toggleRecording()" class="w-full py-4 sm:py-4.5 rounded-2xl bg-gradient-to-r from-[#B6FF00] via-[#8EFF00] to-[#22C55E] text-slate-950 font-extrabold text-base flex items-center justify-center gap-2.5 shadow-lg shadow-[#B6FF00]/25 hover:opacity-95 active:scale-[0.98] transition">
+              <span id="btnRecordIcon" class="text-xl">🎙️</span>
+              <span id="btnRecordText">Mulai Rekam Suara</span>
+            </button>
+
+            <!-- Playback Preview Button -->
+            <button id="btnPlayPreview" onclick="togglePlayback()" disabled class="w-full py-4 sm:py-4.5 rounded-2xl bg-white/10 dark:bg-white/10 light:bg-slate-200 text-slate-400 font-extrabold text-base flex items-center justify-center gap-2.5 border border-white/10 cursor-not-allowed transition">
+              <span id="btnPlayIcon" class="text-xl">▶️</span>
+              <span id="btnPlayText">Putar Suara (Preview)</span>
+            </button>
+          </div>
+
+          <!-- Secondary Audio Actions: Reset, Delete, Upload & Direct Download -->
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-2 border-t border-white/10">
+            
+            <button onclick="resetAudioSettings()" class="py-2.5 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-300 flex items-center justify-center gap-1.5 transition">
+              <span>🔄</span>
+              <span>Reset</span>
+            </button>
+
+            <button onclick="deleteRecording()" class="py-2.5 px-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-xs font-bold text-red-400 flex items-center justify-center gap-1.5 transition">
+              <span>🗑️</span>
+              <span>Hapus</span>
+            </button>
+
+            <!-- File Upload Input Hidden -->
+            <input type="file" id="audioFileInput" accept="audio/*" class="hidden" onchange="handleAudioFileUpload(event)">
+            <button onclick="document.getElementById('audioFileInput').click()" class="py-2.5 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-300 flex items-center justify-center gap-1.5 transition">
+              <span>📁</span>
+              <span>Upload</span>
+            </button>
+
+            <!-- Demo Sample Voice Button -->
+            <button onclick="loadDemoSampleAudio()" class="py-2.5 px-2 rounded-xl bg-[#B6FF00]/10 hover:bg-[#B6FF00]/20 border border-[#B6FF00]/30 text-xs font-bold text-[#B6FF00] flex items-center justify-center gap-1.5 transition" title="Gunakan suara contoh instan tanpa rekam mic">
+              <span>✨</span>
+              <span>Demo</span>
+            </button>
+
+            <!-- Download Button -->
+            <button id="btnDownloadWav" onclick="downloadModifiedAudio()" disabled class="col-span-3 sm:col-span-1 py-2.5 px-3 rounded-xl bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/40 font-bold text-xs flex items-center justify-center gap-1.5 opacity-50 cursor-not-allowed transition">
+              <span>📥</span>
+              <span>Unduh WAV</span>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 10 PRESET SUARA SELECTOR -->
+      <div class="rounded-3xl bg-[#0B0F19] dark:bg-[#0B0F19] light:bg-white border border-white/15 dark:border-white/15 light:border-slate-200 p-5 shadow-xl mb-6">
+        
+        <div class="flex items-center justify-between mb-3.5">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🎭</span>
+            <h3 class="font-extrabold text-sm sm:text-base text-white dark:text-white light:text-slate-900">
+              Pilih Karakter Suara
+            </h3>
+          </div>
+          <span class="text-[11px] font-bold text-[#B6FF00] bg-[#B6FF00]/10 px-2 py-0.5 rounded-full" id="activePresetBadge">
+            Aktif: Normal
+          </span>
+        </div>
+
+        <!-- Preset Buttons Grid (2 rows on mobile) -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="presetGridContainer">
+          
+          <button onclick="applyVoicePreset('normal')" class="preset-btn active p-3 rounded-2xl bg-white/10 border-2 border-[#B6FF00] text-left flex items-center gap-2.5 transition">
+            <span class="text-2xl">🎙️</span>
+            <div>
+              <div class="text-xs font-bold text-white">Normal</div>
+              <div class="text-[10px] text-slate-400">Suara Asli</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('male')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">👨</span>
+            <div>
+              <div class="text-xs font-bold text-white">Pria</div>
+              <div class="text-[10px] text-slate-400">Deep Pitch</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('female')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">👩</span>
+            <div>
+              <div class="text-xs font-bold text-white">Wanita</div>
+              <div class="text-[10px] text-slate-400">High Pitch</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('child')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">👶</span>
+            <div>
+              <div class="text-xs font-bold text-white">Anak</div>
+              <div class="text-[10px] text-slate-400">Ceria & Imut</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('robot')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">🤖</span>
+            <div>
+              <div class="text-xs font-bold text-white">Robot</div>
+              <div class="text-[10px] text-slate-400">Mekanikal</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('bass')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">🔊</span>
+            <div>
+              <div class="text-xs font-bold text-white">Deep Bass</div>
+              <div class="text-[10px] text-slate-400">Menggelegar</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('chipmunk')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">🐿️</span>
+            <div>
+              <div class="text-xs font-bold text-white">Chipmunk</div>
+              <div class="text-[10px] text-slate-400">Ultra High</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('monster')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">👹</span>
+            <div>
+              <div class="text-xs font-bold text-white">Monster</div>
+              <div class="text-[10px] text-slate-400">Seram & Distorsi</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('echo')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">🌌</span>
+            <div>
+              <div class="text-xs font-bold text-white">Echo Gua</div>
+              <div class="text-[10px] text-slate-400">Gema Pantulan</div>
+            </div>
+          </button>
+
+          <button onclick="applyVoicePreset('radio')" class="preset-btn p-3 rounded-2xl bg-white/5 border border-white/10 text-left flex items-center gap-2.5 hover:border-[#B6FF00]/50 transition">
+            <span class="text-2xl">📻</span>
+            <div>
+              <div class="text-xs font-bold text-white">Radio HT</div>
+              <div class="text-[10px] text-slate-400">Walkie Talkie</div>
+            </div>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- KONTROL MANUAL EQUALIZER & DSP (SLIDERS) -->
+      <div class="rounded-3xl bg-[#0B0F19] dark:bg-[#0B0F19] light:bg-white border border-white/15 dark:border-white/15 light:border-slate-200 p-5 shadow-xl mb-6">
+        
+        <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🎚️</span>
+            <h3 class="font-extrabold text-sm sm:text-base text-white dark:text-white light:text-slate-900">
+              Pengaturan Manual DSP & Equalizer
+            </h3>
+          </div>
+          <button onclick="resetSliders()" class="text-[11px] font-bold text-[#B6FF00] hover:underline">
+            Default Sliders
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          
+          <!-- Pitch Shifter Slider -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-300">Pitch (Semitones)</span>
+              <span id="valPitch" class="text-[#B6FF00] font-mono">0 semitones</span>
+            </div>
+            <input type="range" id="sliderPitch" min="-12" max="12" step="1" value="0" oninput="onSliderChange()">
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>-12 (Deep)</span>
+              <span>0</span>
+              <span>+12 (High)</span>
+            </div>
+          </div>
+
+          <!-- Speed / Tempo Slider -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-300">Speed / Tempo</span>
+              <span id="valSpeed" class="text-[#B6FF00] font-mono">1.0x</span>
+            </div>
+            <input type="range" id="sliderSpeed" min="0.5" max="2.0" step="0.05" value="1.0" oninput="onSliderChange()">
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>0.5x Slow</span>
+              <span>1.0x Normal</span>
+              <span>2.0x Fast</span>
+            </div>
+          </div>
+
+          <!-- Bass Equalizer -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-300">Bass (Low EQ 100Hz)</span>
+              <span id="valBass" class="text-[#B6FF00] font-mono">0 dB</span>
+            </div>
+            <input type="range" id="sliderBass" min="-15" max="15" step="1" value="0" oninput="onSliderChange()">
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>-15dB</span>
+              <span>0dB</span>
+              <span>+15dB</span>
+            </div>
+          </div>
+
+          <!-- Treble Equalizer -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-300">Treble (High EQ 8kHz)</span>
+              <span id="valTreble" class="text-[#B6FF00] font-mono">0 dB</span>
+            </div>
+            <input type="range" id="sliderTreble" min="-15" max="15" step="1" value="0" oninput="onSliderChange()">
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>-15dB</span>
+              <span>0dB</span>
+              <span>+15dB</span>
+            </div>
+          </div>
+
+          <!-- Echo & Reverb Mix -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-300">Echo & Delay Mix</span>
+              <span id="valEcho" class="text-[#B6FF00] font-mono">0%</span>
+            </div>
+            <input type="range" id="sliderEcho" min="0" max="80" step="5" value="0" oninput="onSliderChange()">
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>Off (0%)</span>
+              <span>Moderate</span>
+              <span>80% Deep Echo</span>
+            </div>
+          </div>
+
+          <!-- Master Volume -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-300">Volume Booster</span>
+              <span id="valVolume" class="text-[#B6FF00] font-mono">100%</span>
+            </div>
+            <input type="range" id="sliderVolume" min="0" max="200" step="5" value="100" oninput="onSliderChange()">
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>0%</span>
+              <span>100% (Standard)</span>
+              <span>200% Boost</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- VIEW 3: ADMIN SETTINGS & FOOTER EDITOR -->
+    <!-- ---------------------------------------------------- -->
+    <section id="viewAdmin" class="hidden max-w-4xl mx-auto px-4 py-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-extrabold text-white">Panel Konfigurasi Admin</h2>
+          <p class="text-xs text-slate-400">Kelola logo aplikasi, informasi footer, dan penyimpanan Google Drive.</p>
+        </div>
+        <button onclick="navigateTo('studio')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold transition">
+          Ke Studio Suara →
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Upload & Ganti Logo Card -->
+        <div class="p-6 rounded-3xl bg-[#0B0F19] border border-white/10 flex flex-col gap-4">
+          <h3 class="font-bold text-sm text-white flex items-center gap-2">
+            <span>🖼️</span> Logo Aplikasi
+          </h3>
+          <div class="w-24 h-24 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden mx-auto" id="adminLogoPreviewBox">
+            <span class="text-3xl">🎙️</span>
+          </div>
+          <input type="file" id="logoUploadInput" accept="image/*" class="hidden" onchange="previewAndUploadLogo(event)">
+          <button onclick="document.getElementById('logoUploadInput').click()" class="py-2.5 rounded-xl bg-[#B6FF00] text-black font-extrabold text-xs flex items-center justify-center gap-2 hover:opacity-95 transition">
+            <span>Upload Logo Baru</span>
+          </button>
+          <p class="text-[11px] text-slate-400 text-center">Format PNG/JPG/WEBP, maksimal 5MB.</p>
+        </div>
+
+        <!-- Edit Footer Settings Card -->
+        <div class="p-6 rounded-3xl bg-[#0B0F19] border border-white/10 flex flex-col gap-3">
+          <h3 class="font-bold text-sm text-white flex items-center gap-2">
+            <span>📝</span> Pengaturan Footer
+          </h3>
+
+          <div>
+            <label class="text-[11px] text-slate-400 font-bold block mb-1">Nama Brand Footer</label>
+            <input type="text" id="inputFooterBrand" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white focus:border-[#B6FF00] outline-none">
+          </div>
+
+          <div>
+            <label class="text-[11px] text-slate-400 font-bold block mb-1">Deskripsi Footer</label>
+            <textarea id="inputFooterDesc" rows="2" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white focus:border-[#B6FF00] outline-none"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[11px] text-slate-400 font-bold block mb-1">WhatsApp / HP</label>
+              <input type="text" id="inputFooterPhone" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white focus:border-[#B6FF00] outline-none">
+            </div>
+            <div>
+              <label class="text-[11px] text-slate-400 font-bold block mb-1">Email</label>
+              <input type="email" id="inputFooterEmail" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white focus:border-[#B6FF00] outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[11px] text-slate-400 font-bold block mb-1">Teks Hak Cipta</label>
+            <input type="text" id="inputFooterCopyright" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white focus:border-[#B6FF00] outline-none">
+          </div>
+
+          <button onclick="saveFooterSettings()" class="mt-2 py-2.5 rounded-xl bg-gradient-to-r from-[#B6FF00] to-[#22C55E] text-black font-extrabold text-xs hover:opacity-95 transition">
+            Simpan Konfigurasi Footer
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== DEFAULT FOOTER (ADMIN EDITABLE) ==================== -->
+  <footer class="mt-16 border-t border-white/10 bg-[#06080F] dark:bg-[#06080F] light:bg-slate-100 py-10 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+      
+      <!-- Brand Info -->
+      <div class="md:col-span-2 flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🎙️</span>
+          <span class="font-extrabold text-base text-white dark:text-white light:text-slate-900" id="footerBrandTitle">Voice Changer AI</span>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed max-w-sm" id="footerDescText">
+          Studio pengubah karakter suara realtime berbasis Web Audio API & Google Apps Script. 100% aman, tanpa instalasi aplikasi tambahan.
+        </p>
+        <div class="text-[11px] text-slate-500 font-mono" id="footerCopyrightText">
+          © 2026 Voice Changer AI. All rights reserved. Developed by SamaDigi.
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="flex flex-col gap-2.5 text-xs text-slate-400">
+        <span class="font-bold text-white dark:text-white light:text-slate-900 text-sm">Fitur Studio</span>
+        <a href="javascript:void(0)" onclick="navigateTo('studio')" class="hover:text-[#B6FF00] transition">Perekam Mic Realtime</a>
+        <a href="javascript:void(0)" onclick="navigateTo('landing'); scrollToFeatures();" class="hover:text-[#B6FF00] transition">10 Preset Suara</a>
+        <a href="javascript:void(0)" onclick="navigateTo('studio')" class="hover:text-[#B6FF00] transition">Equalizer & Audio DSP</a>
+        <a href="javascript:void(0)" onclick="navigateTo('studio')" class="hover:text-[#B6FF00] transition">Direct WAV Download</a>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="flex flex-col gap-2 text-xs text-slate-400">
+        <span class="font-bold text-white dark:text-white light:text-slate-900 text-sm">Hubungi Kami</span>
+        <div id="footerEmailText">📧 support@voicedigi.app</div>
+        <div id="footerPhoneText">📱 +62 812-3456-7890</div>
+        <div id="footerAddressText">📍 Jakarta, Indonesia</div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ==================== MIC PERMISSION HELP MODAL ==================== -->
+  <div id="micHelpModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="moving-border-wrapper w-full max-w-md shadow-2xl">
+      <div class="moving-border-inner p-6 relative flex flex-col gap-4">
+        
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🎙️</span>
+            <h3 class="font-extrabold text-base text-white">Panduan Izin Mikrofon</h3>
+          </div>
+          <button onclick="closeMicHelpModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+        </div>
+
+        <div class="flex flex-col gap-3 text-xs text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col gap-1.5">
+            <span class="font-bold text-[#B6FF00] flex items-center gap-1.5">
+              <span>📱</span> Google Chrome di HP Android:
+            </span>
+            <p>1. Ketuk ikon <strong>Gembok 🔒</strong> atau <strong>Setelan Halaman ⚙️</strong> di sebelah kiri bilah URL atas browser.</p>
+            <p>2. Pilih menu <strong>Izin (Permissions)</strong> → pilih <strong>Mikrofon (Microphone)</strong>.</p>
+            <p>3. Ubah status menjadi <strong>Izinkan (Allow)</strong>, lalu segarkan halaman.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col gap-1.5">
+            <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+              <span>🍎</span> Safari di iPhone / iPad (iOS):
+            </span>
+            <p>1. Buka <strong>Pengaturan HP (Settings)</strong> → gulir ke bawah ke menu <strong>Safari</strong>.</p>
+            <p>2. Pada bagian <em>Settings for Websites</em>, pilih <strong>Microphone</strong> → ubah ke <strong>Allow</strong>.</p>
+            <p>3. Kembali ke browser dan muat ulang halaman.</p>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col gap-1.5">
+            <span class="font-bold text-teal-300 flex items-center gap-1.5">
+              <span>🌐</span> Preview / Sandbox Tanpa Izin Mic:
+            </span>
+            <p>Jika Anda menjalankan aplikasi di dalam jendela preview web/iframe yang membatasi akses mic, gunakan tombol <strong>"✨ Pakai Suara Sampel"</strong> atau <strong>"📁 Upload File"</strong> untuk mencoba seluruh 10 efek suara secara instan.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-2 pt-2 border-t border-white/10">
+          <button onclick="retryMicPermission()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#B6FF00] to-[#22C55E] text-slate-950 font-extrabold text-xs shadow-md transition flex items-center justify-center gap-1.5">
+            <span>🔄</span>
+            <span>Coba Minta Izin Mic</span>
+          </button>
+          <button onclick="closeMicHelpModal(); loadDemoSampleAudio();" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/15 transition flex items-center justify-center gap-1.5">
+            <span>✨</span>
+            <span>Gunakan Audio Sampel</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LOGIN MODAL ==================== -->
+  <div id="loginModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    
+    <!-- Login Card with Moving Border & Soft Glow -->
+    <div class="moving-border-wrapper w-full max-w-sm shadow-2xl">
+      <div class="moving-border-inner p-6 sm:p-7 relative flex flex-col gap-4">
+        
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🔐</span>
+            <h3 class="font-extrabold text-base text-white">Masuk Administrator</h3>
+          </div>
+          <button onclick="closeLoginModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="flex flex-col gap-3.5">
+          <div>
+            <label class="text-xs font-bold text-slate-300 block mb-1">Username</label>
+            <input type="text" id="loginUsername" required placeholder="admin" class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 text-sm text-white placeholder-slate-500 focus:border-[#B6FF00] outline-none">
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-300 block mb-1">Password</label>
+            <div class="relative">
+              <input type="password" id="loginPassword" required placeholder="123" class="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 text-sm text-white placeholder-slate-500 focus:border-[#B6FF00] outline-none pr-10">
+              <!-- Show / Hide Password Eye Icon -->
+              <button type="button" onclick="togglePasswordVisibility('loginPassword', 'eyeIconLogin')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-sm">
+                <span id="eyeIconLogin">👁️</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-400">
+            Default Admin: <strong class="text-[#B6FF00]">admin</strong> | Password: <strong class="text-[#B6FF00]">123</strong>
+          </div>
+
+          <button type="submit" id="btnLoginSubmit" class="w-full py-3 rounded-xl bg-gradient-to-r from-[#B6FF00] to-[#22C55E] text-slate-950 font-extrabold text-sm shadow-md hover:opacity-95 transition">
+            Masuk Sesi
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------- -->
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <!-- ---------------------------------------------------- -->
+  <script>
+    /**
+     * GOOGLE APPS SCRIPT WEB APP API ENDPOINT
+     */
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzNU1W_4-7dUnSLku3UopRVfrwcorZ4VaDY2Cd9a_I4M1SExTAywxGHMPm9iqlIgMHP/exec";
+
+    const AppState = {
+      theme: 'dark',
+      view: 'landing',
+      currentUser: null,
+      sessionToken: null,
+      settings: {},
+      isGasAvailable: typeof google !== 'undefined' && google.script && google.script.run,
+      
+      // Audio Recording & Playback State
+      audioContext: null,
+      mediaRecorder: null,
+      audioStream: null,
+      recordedChunks: [],
+      audioBlob: null,
+      audioBuffer: null,
+      isPlaying: false,
+      isRecording: false,
+      recordTimerInterval: null,
+      recordSeconds: 0,
+      
+      // Active DSP Source Node
+      activeSourceNode: null,
+      
+      // Visualizer State
+      analyserNode: null,
+      animationFrameId: null,
+      
+      // Active Preset & Equalizer Sliders
+      activePreset: 'normal',
+      params: {
+        pitch: 0,        // Semitones (-12 to +12)
+        speed: 1.0,      // Playback speed (0.5x to 2.0x)
+        bass: 0,         // dB (-15 to +15)
+        treble: 0,       // dB (-15 to +15)
+        echo: 0,         // % (0 to 80)
+        volume: 100      // % (0 to 200)
+      }
+    };
+
+    // Preset Definitions
+    const PRESETS = {
+      normal:   { pitch: 0,   speed: 1.0,  bass: 0,   treble: 0,   echo: 0,   volume: 100, name: 'Normal' },
+      male:     { pitch: -4,  speed: 0.95, bass: 10,  treble: -2,  echo: 5,   volume: 110, name: 'Pria' },
+      female:   { pitch: 4,   speed: 1.05, bass: -4,  treble: 8,   echo: 5,   volume: 105, name: 'Wanita' },
+      child:    { pitch: 7,   speed: 1.15, bass: -8,  treble: 10,  echo: 0,   volume: 110, name: 'Anak' },
+      robot:    { pitch: 0,   speed: 1.0,  bass: 4,   treble: 6,   echo: 25,  volume: 120, name: 'Robot' },
+      bass:     { pitch: -6,  speed: 0.9,  bass: 15,  treble: -5,  echo: 10,  volume: 130, name: 'Deep Bass' },
+      chipmunk: { pitch: 12,  speed: 1.35, bass: -12, treble: 12,  echo: 0,   volume: 115, name: 'Chipmunk' },
+      monster:  { pitch: -8,  speed: 0.85, bass: 14,  treble: -6,  echo: 30,  volume: 130, name: 'Monster' },
+      echo:     { pitch: 0,   speed: 1.0,  bass: 2,   treble: 4,   echo: 65,  volume: 100, name: 'Echo Gua' },
+      radio:    { pitch: 1,   speed: 1.0,  bass: -10, treble: 12,  echo: 15,  volume: 120, name: 'Radio HT' }
+    };
+
+    /**
+     * UNIFIED API CLIENT (Works in GAS Runtime & Vercel)
+     */
+    async function callBackendApi(action, data = {}) {
+      if (AppState.isGasAvailable) {
+        return new Promise((resolve, reject) => {
+          if (typeof google.script.run[action] === 'function') {
+            const args = Object.values(data);
+            google.script.run
+              .withSuccessHandler(res => resolve(res))
+              .withFailureHandler(err => reject(err))[action](...args);
+          } else {
+            resolve({ success: false, message: 'Action not found in GAS' });
+          }
+        });
+      }
+
+      // Vercel / External Mode: Use Direct Fetch API to GAS Web App
+      try {
+        const payload = { action, ...data };
+        const response = await fetch(GAS_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+        const json = await response.json();
+        return json;
+      } catch (err) {
+        console.warn('API Fetch fallback to Local Mock:', err);
+        return { success: false, message: err.message, isLocalFallback: true };
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initHeroInteractions();
+      initAudioVisualizerCanvas();
+      checkAuthSession();
+      fetchServerSettings();
+      checkInitialMicPermission();
+    });
+
+    function initTheme() {
+      const saved = localStorage.getItem('vc_theme') || 'dark';
+      setTheme(saved);
+    }
+
+    function toggleTheme() {
+      const next = AppState.theme === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+    }
+
+    function setTheme(t) {
+      AppState.theme = t;
+      localStorage.setItem('vc_theme', t);
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (t === 'dark') {
+        html.classList.add('dark');
+        html.classList.remove('light');
+        document.body.className = "bg-[#06080F] text-slate-100 min-h-screen font-sans selection:bg-[#B6FF00] selection:text-black transition-colors duration-300";
+        if (themeIcon) themeIcon.textContent = '🌙';
+      } else {
+        html.classList.add('light');
+        html.classList.remove('dark');
+        document.body.className = "bg-slate-50 text-slate-900 min-h-screen font-sans selection:bg-[#22C55E] selection:text-white transition-colors duration-300";
+        if (themeIcon) themeIcon.textContent = '☀️';
+      }
+    }
+
+    function navigateTo(v) {
+      AppState.view = v;
+      document.getElementById('viewLanding').classList.add('hidden');
+      document.getElementById('viewStudio').classList.add('hidden');
+      document.getElementById('viewAdmin').classList.add('hidden');
+
+      if (v === 'landing') {
+        document.getElementById('viewLanding').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (v === 'studio') {
+        document.getElementById('viewStudio').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (v === 'admin') {
+        if (!AppState.currentUser || AppState.currentUser.role !== 'Admin') {
+          showToast('Silakan login sebagai Admin untuk mengakses panel ini.', 'info');
+          openLoginModal();
+          return;
+        }
+        document.getElementById('viewAdmin').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function scrollToFeatures() {
+      const el = document.getElementById('featuresSection');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function initHeroInteractions() {
+      const heroSec = document.getElementById('heroSection');
+      const spotlight = document.getElementById('cursorSpotlight');
+      const card = document.getElementById('heroInteractiveCard');
+
+      if (!heroSec || !spotlight || !card) return;
+
+      heroSec.addEventListener('mousemove', (e) => {
+        const rect = heroSec.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        spotlight.style.left = `${x}px`;
+        spotlight.style.top = `${y}px`;
+        spotlight.style.opacity = '1';
+
+        const cardRect = card.getBoundingClientRect();
+        const cardX = e.clientX - cardRect.left - cardRect.width / 2;
+        const cardY = e.clientY - cardRect.top - cardRect.height / 2;
+        
+        const rotateX = -(cardY / 25).toFixed(2);
+        const rotateY = (cardX / 25).toFixed(2);
+
+        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+
+      heroSec.addEventListener('mouseleave', () => {
+        spotlight.style.opacity = '0';
+        card.style.transform = `rotate(-2deg)`;
+      });
+    }
+
+    async function checkInitialMicPermission() {
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const res = await navigator.permissions.query({ name: 'microphone' });
+          updateMicStatusUI(res.state);
+          res.onchange = () => updateMicStatusUI(res.state);
+        } catch (e) {
+          // Permissions query not supported for mic on some mobile browsers
+        }
+      }
+    }
+
+    function updateMicStatusUI(state) {
+      const dot = document.getElementById('micStatusDot');
+      const text = document.getElementById('micStatusText');
+      const banner = document.getElementById('micDeniedBanner');
+      if (!dot || !text) return;
+
+      if (state === 'granted') {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        text.textContent = 'Mic Aktif';
+        if (banner) banner.classList.add('hidden');
+      } else if (state === 'denied') {
+        dot.className = 'w-2 h-2 rounded-full bg-red-500';
+        text.textContent = 'Mic Diblokir';
+        if (banner) banner.classList.remove('hidden');
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+        text.textContent = 'Mic Standby';
+      }
+    }
+
+    function openMicHelpModal() {
+      const modal = document.getElementById('micHelpModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeMicHelpModal() {
+      const modal = document.getElementById('micHelpModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    async function retryMicPermission() {
+      closeMicHelpModal();
+      await startRecording();
+    }
+
+    function checkAndRequestMicPermission() {
+      if (AppState.isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+
+    async function loadDemoSampleAudio() {
+      const audioCtx = getAudioContext();
+      const sampleRate = audioCtx.sampleRate;
+      const duration = 4.2;
+      const numFrames = Math.floor(sampleRate * duration);
+      const buffer = audioCtx.createBuffer(1, numFrames, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      const pitches = [220, 246.94, 277.18, 329.63, 370.0, 329.63, 277.18, 220];
+      const noteDuration = duration / pitches.length;
+
+      for (let i = 0; i < numFrames; i++) {
+        const t = i / sampleRate;
+        const noteIdx = Math.min(Math.floor(t / noteDuration), pitches.length - 1);
+        const f0 = pitches[noteIdx];
+        const noteT = t % noteDuration;
+
+        const env = Math.sin((noteT / noteDuration) * Math.PI);
+        const h1 = Math.sin(2 * Math.PI * f0 * t) * 0.55;
+        const h2 = Math.sin(2 * Math.PI * f0 * 2 * t) * 0.28;
+        const h3 = Math.sin(2 * Math.PI * f0 * 3 * t) * 0.16;
+        const h4 = Math.sin(2 * Math.PI * f0 * 4 * t) * 0.08;
+        const breath = (Math.random() * 2 - 1) * 0.02;
+
+        data[i] = (h1 + h2 + h3 + h4 + breath) * env * 0.75;
+      }
+
+      AppState.audioBuffer = buffer;
+      AppState.audioBlob = audioBufferToWavBlob(buffer);
+
+      document.getElementById('canvasEmptyPrompt').classList.add('hidden');
+      document.getElementById('timerDisplay').textContent = '00:04';
+      enablePlayerButtons();
+
+      showToast('✨ Audio sampel demo siap! Coba 10 karakter suara di bawah.', 'success');
+    }
+
+    function getAudioContext() {
+      if (!AppState.audioContext) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        AppState.audioContext = new AudioCtx();
+      }
+      if (AppState.audioContext.state === 'suspended') {
+        AppState.audioContext.resume();
+      }
+      return AppState.audioContext;
+    }
+
+    async function toggleRecording() {
+      if (AppState.isRecording) {
+        stopRecording();
+      } else {
+        await startRecording();
+      }
+    }
+
+    async function startRecording() {
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('Browser ini tidak mendukung perekaman audio langsung.');
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        AppState.audioStream = stream;
+        
+        const audioCtx = getAudioContext();
+        const source = audioCtx.createMediaStreamSource(stream);
+        
+        if (!AppState.analyserNode) {
+          AppState.analyserNode = audioCtx.createAnalyser();
+          AppState.analyserNode.fftSize = 256;
+        }
+        source.connect(AppState.analyserNode);
+
+        AppState.recordedChunks = [];
+        AppState.mediaRecorder = new MediaRecorder(stream);
+
+        AppState.mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            AppState.recordedChunks.push(e.data);
+          }
+        };
+
+        AppState.mediaRecorder.onstop = async () => {
+          AppState.audioBlob = new Blob(AppState.recordedChunks, { type: 'audio/wav' });
+          const arrayBuffer = await AppState.audioBlob.arrayBuffer();
+          AppState.audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+          
+          document.getElementById('canvasEmptyPrompt').classList.add('hidden');
+          enablePlayerButtons();
+          showToast('Rekaman berhasil! Pilih efek suara di bawah.', 'success');
+        };
+
+        AppState.mediaRecorder.start();
+        AppState.isRecording = true;
+
+        document.getElementById('btnRecordText').textContent = 'Berhenti Rekam';
+        document.getElementById('btnRecordIcon').textContent = '⏹️';
+        document.getElementById('btnRecordToggle').classList.add('recording-pulse');
+        document.getElementById('recIndicatorDot').classList.remove('hidden');
+        document.getElementById('micStatusDot').className = 'w-2 h-2 rounded-full bg-red-500 animate-ping';
+        document.getElementById('micStatusText').textContent = 'Merekam...';
+
+        const banner = document.getElementById('micDeniedBanner');
+        if (banner) banner.classList.add('hidden');
+
+        startTimer();
+      } catch (err) {
+        const banner = document.getElementById('micDeniedBanner');
+        if (banner) banner.classList.remove('hidden');
+        
+        const dot = document.getElementById('micStatusDot');
+        const text = document.getElementById('micStatusText');
+        if (dot && text) {
+          dot.className = 'w-2 h-2 rounded-full bg-red-500';
+          text.textContent = 'Mic Diblokir';
+        }
+
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError' || err.message.toLowerCase().includes('denied') || err.message.toLowerCase().includes('permission')) {
+          showToast('Izin mic ditolak. Gunakan opsi "✨ Demo" atau lihat "Bantuan Izin".', 'error');
+          openMicHelpModal();
+        } else if (err.name === 'NotFoundError') {
+          showToast('Perangkat mikrofon tidak ditemukan di HP/komputer ini.', 'error');
+        } else {
+          showToast('Kendala mikrofon: ' + err.message, 'error');
+        }
+      }
+    }
+
+    function stopRecording() {
+      if (AppState.mediaRecorder && AppState.isRecording) {
+        AppState.mediaRecorder.stop();
+        if (AppState.audioStream) {
+          AppState.audioStream.getTracks().forEach(track => track.stop());
+        }
+        AppState.isRecording = false;
+
+        stopTimer();
+        document.getElementById('btnRecordText').textContent = 'Rekam Ulang';
+        document.getElementById('btnRecordIcon').textContent = '🎙️';
+        document.getElementById('btnRecordToggle').classList.remove('recording-pulse');
+        document.getElementById('recIndicatorDot').classList.add('hidden');
+        document.getElementById('micStatusDot').className = 'w-2 h-2 rounded-full bg-emerald-400';
+        document.getElementById('micStatusText').textContent = 'Rekaman Tersedia';
+      }
+    }
+
+    function startTimer() {
+      AppState.recordSeconds = 0;
+      updateTimerDisplay();
+      AppState.recordTimerInterval = setInterval(() => {
+        AppState.recordSeconds++;
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (AppState.recordTimerInterval) {
+        clearInterval(AppState.recordTimerInterval);
+      }
+    }
+
+    function updateTimerDisplay() {
+      const mins = String(Math.floor(AppState.recordSeconds / 60)).padStart(2, '0');
+      const secs = String(AppState.recordSeconds % 60).padStart(2, '0');
+      document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+    }
+
+    function togglePlayback() {
+      if (AppState.isPlaying) {
+        stopPlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    function startPlayback() {
+      if (!AppState.audioBuffer) return;
+      const audioCtx = getAudioContext();
+
+      if (AppState.activeSourceNode) {
+        try { AppState.activeSourceNode.stop(); } catch(e) {}
+      }
+
+      const source = audioCtx.createBufferSource();
+      source.buffer = AppState.audioBuffer;
+
+      const pitchRatio = Math.pow(2, AppState.params.pitch / 12);
+      source.playbackRate.value = pitchRatio * AppState.params.speed;
+
+      const bassFilter = audioCtx.createBiquadFilter();
+      bassFilter.type = 'lowshelf';
+      bassFilter.frequency.value = 120;
+      bassFilter.gain.value = AppState.params.bass;
+
+      const trebleFilter = audioCtx.createBiquadFilter();
+      trebleFilter.type = 'highshelf';
+      trebleFilter.frequency.value = 6000;
+      trebleFilter.gain.value = AppState.params.treble;
+
+      const delayNode = audioCtx.createDelay();
+      const feedbackGain = audioCtx.createGain();
+      const delayAmount = (AppState.params.echo / 100);
+      delayNode.delayTime.value = 0.28;
+      feedbackGain.gain.value = delayAmount * 0.7;
+
+      const masterGain = audioCtx.createGain();
+      masterGain.gain.value = AppState.params.volume / 100;
+
+      source.connect(bassFilter);
+      bassFilter.connect(trebleFilter);
+      trebleFilter.connect(masterGain);
+
+      if (AppState.params.echo > 0) {
+        trebleFilter.connect(delayNode);
+        delayNode.connect(feedbackGain);
+        feedbackGain.connect(delayNode);
+        delayNode.connect(masterGain);
+      }
+
+      if (!AppState.analyserNode) {
+        AppState.analyserNode = audioCtx.createAnalyser();
+        AppState.analyserNode.fftSize = 256;
+      }
+      masterGain.connect(AppState.analyserNode);
+      masterGain.connect(audioCtx.destination);
+
+      source.onended = () => {
+        stopPlayback();
+      };
+
+      source.start(0);
+      AppState.activeSourceNode = source;
+      AppState.isPlaying = true;
+
+      document.getElementById('btnPlayIcon').textContent = '⏸️';
+      document.getElementById('btnPlayText').textContent = 'Jeda (Pause)';
+      document.getElementById('btnPlayPreview').classList.add('bg-[#B6FF00]', 'text-black');
+    }
+
+    function stopPlayback() {
+      if (AppState.activeSourceNode) {
+        try { AppState.activeSourceNode.stop(); } catch(e) {}
+        AppState.activeSourceNode = null;
+      }
+      AppState.isPlaying = false;
+      document.getElementById('btnPlayIcon').textContent = '▶️';
+      document.getElementById('btnPlayText').textContent = 'Putar Suara (Preview)';
+      document.getElementById('btnPlayPreview').classList.remove('bg-[#B6FF00]', 'text-black');
+    }
+
+    function applyVoicePreset(key) {
+      if (!PRESETS[key]) return;
+      AppState.activePreset = key;
+      const p = PRESETS[key];
+      
+      AppState.params.pitch = p.pitch;
+      AppState.params.speed = p.speed;
+      AppState.params.bass = p.bass;
+      AppState.params.treble = p.treble;
+      AppState.params.echo = p.echo;
+      AppState.params.volume = p.volume;
+
+      syncSliderUI();
+      
+      document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.remove('active', 'border-2', 'border-[#B6FF00]', 'bg-white/10');
+        b.classList.add('bg-white/5', 'border-white/10');
+      });
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active', 'border-2', 'border-[#B6FF00]', 'bg-white/10');
+      }
+      document.getElementById('activePresetBadge').textContent = `Aktif: ${p.name}`;
+
+      if (AppState.isPlaying) {
+        startPlayback();
+      }
+    }
+
+    function onSliderChange() {
+      AppState.params.pitch = parseInt(document.getElementById('sliderPitch').value);
+      AppState.params.speed = parseFloat(document.getElementById('sliderSpeed').value);
+      AppState.params.bass = parseInt(document.getElementById('sliderBass').value);
+      AppState.params.treble = parseInt(document.getElementById('sliderTreble').value);
+      AppState.params.echo = parseInt(document.getElementById('sliderEcho').value);
+      AppState.params.volume = parseInt(document.getElementById('sliderVolume').value);
+
+      updateSliderLabels();
+
+      if (AppState.isPlaying) {
+        startPlayback();
+      }
+    }
+
+    function syncSliderUI() {
+      document.getElementById('sliderPitch').value = AppState.params.pitch;
+      document.getElementById('sliderSpeed').value = AppState.params.speed;
+      document.getElementById('sliderBass').value = AppState.params.bass;
+      document.getElementById('sliderTreble').value = AppState.params.treble;
+      document.getElementById('sliderEcho').value = AppState.params.echo;
+      document.getElementById('sliderVolume').value = AppState.params.volume;
+      updateSliderLabels();
+    }
+
+    function updateSliderLabels() {
+      document.getElementById('valPitch').textContent = `${AppState.params.pitch > 0 ? '+' : ''}${AppState.params.pitch} semi`;
+      document.getElementById('valSpeed').textContent = `${AppState.params.speed.toFixed(2)}x`;
+      document.getElementById('valBass').textContent = `${AppState.params.bass > 0 ? '+' : ''}${AppState.params.bass} dB`;
+      document.getElementById('valTreble').textContent = `${AppState.params.treble > 0 ? '+' : ''}${AppState.params.treble} dB`;
+      document.getElementById('valEcho').textContent = `${AppState.params.echo}%`;
+      document.getElementById('valVolume').textContent = `${AppState.params.volume}%`;
+    }
+
+    function resetSliders() {
+      applyVoicePreset('normal');
+    }
+
+    function resetAudioSettings() {
+      stopPlayback();
+      applyVoicePreset('normal');
+      showToast('Pengaturan suara dikembalikan ke default.', 'info');
+    }
+
+    function deleteRecording() {
+      stopPlayback();
+      AppState.audioBlob = null;
+      AppState.audioBuffer = null;
+      AppState.recordedChunks = [];
+      document.getElementById('canvasEmptyPrompt').classList.remove('hidden');
+      document.getElementById('timerDisplay').textContent = '00:00';
+      
+      const btnPlay = document.getElementById('btnPlayPreview');
+      btnPlay.disabled = true;
+      btnPlay.classList.add('opacity-50', 'cursor-not-allowed');
+
+      const btnDown = document.getElementById('btnDownloadWav');
+      btnDown.disabled = true;
+      btnDown.classList.add('opacity-50', 'cursor-not-allowed');
+
+      showToast('Rekaman berhasil dihapus.', 'info');
+    }
+
+    function enablePlayerButtons() {
+      const btnPlay = document.getElementById('btnPlayPreview');
+      btnPlay.disabled = false;
+      btnPlay.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      const btnDown = document.getElementById('btnDownloadWav');
+      btnDown.disabled = false;
+      btnDown.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    async function handleAudioFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const audioCtx = getAudioContext();
+        const arrayBuffer = await file.arrayBuffer();
+        AppState.audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        AppState.audioBlob = file;
+
+        document.getElementById('canvasEmptyPrompt').classList.add('hidden');
+        enablePlayerButtons();
+        showToast(`File audio "${file.name}" siap dimodifikasi!`, 'success');
+      } catch (err) {
+        showToast('Gagal memproses file audio: ' + err.message, 'error');
+      }
+    }
+
+    async function downloadModifiedAudio() {
+      if (!AppState.audioBuffer) return;
+      showToast('Sedang memproses dan merender file WAV...', 'info');
+
+      try {
+        const sampleRate = AppState.audioBuffer.sampleRate;
+        const duration = (AppState.audioBuffer.duration / AppState.params.speed) + (AppState.params.echo > 0 ? 1.5 : 0.5);
+        const length = Math.ceil(sampleRate * duration);
+
+        const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(
+          AppState.audioBuffer.numberOfChannels,
+          length,
+          sampleRate
+        );
+
+        const source = offlineCtx.createBufferSource();
+        source.buffer = AppState.audioBuffer;
+        const pitchRatio = Math.pow(2, AppState.params.pitch / 12);
+        source.playbackRate.value = pitchRatio * AppState.params.speed;
+
+        const bassFilter = offlineCtx.createBiquadFilter();
+        bassFilter.type = 'lowshelf';
+        bassFilter.frequency.value = 120;
+        bassFilter.gain.value = AppState.params.bass;
+
+        const trebleFilter = offlineCtx.createBiquadFilter();
+        trebleFilter.type = 'highshelf';
+        trebleFilter.frequency.value = 6000;
+        trebleFilter.gain.value = AppState.params.treble;
+
+        const masterGain = offlineCtx.createGain();
+        masterGain.gain.value = AppState.params.volume / 100;
+
+        source.connect(bassFilter);
+        bassFilter.connect(trebleFilter);
+        trebleFilter.connect(masterGain);
+
+        if (AppState.params.echo > 0) {
+          const delayNode = offlineCtx.createDelay();
+          const feedbackGain = offlineCtx.createGain();
+          delayNode.delayTime.value = 0.28;
+          feedbackGain.gain.value = (AppState.params.echo / 100) * 0.7;
+
+          trebleFilter.connect(delayNode);
+          delayNode.connect(feedbackGain);
+          feedbackGain.connect(delayNode);
+          delayNode.connect(masterGain);
+        }
+
+        masterGain.connect(offlineCtx.destination);
+        source.start(0);
+
+        const renderedBuffer = await offlineCtx.startRendering();
+        const wavBlob = audioBufferToWavBlob(renderedBuffer);
+
+        const url = URL.createObjectURL(wavBlob);
+        const a = document.createElement('a');
+        const nowStr = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+        a.href = url;
+        a.download = `VoiceChangerAI_${AppState.activePreset}_${nowStr}.wav`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('File WAV berhasil diunduh ke HP Anda! 🎉', 'success');
+
+        // Simpan otomatis ke Google Drive via Unified API
+        const reader = new FileReader();
+        reader.onloadend = async function() {
+          try {
+            await callBackendApi('saveAudioToDrive', {
+              token: AppState.sessionToken,
+              base64Data: reader.result,
+              fileName: a.download,
+              presetName: AppState.activePreset,
+              durationSec: duration
+            });
+          } catch(e) {}
+        };
+        reader.readAsDataURL(wavBlob);
+
+      } catch (err) {
+        showToast('Gagal merender file WAV: ' + err.message, 'error');
+      }
+    }
+
+    function audioBufferToWavBlob(buffer) {
+      const numOfChan = buffer.numberOfChannels;
+      const length = buffer.length * numOfChan * 2 + 44;
+      const outBuffer = new ArrayBuffer(length);
+      const view = new DataView(outBuffer);
+      let channels = [];
+      let sampleRate = buffer.sampleRate;
+      let offset = 0;
+      let pos = 0;
+
+      function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
+      function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
+
+      setUint32(0x46464952); // "RIFF"
+      setUint32(length - 8);
+      setUint32(0x45564157); // "WAVE"
+
+      setUint32(0x20746d66); // "fmt "
+      setUint32(16);
+      setUint16(1);
+      setUint16(numOfChan);
+      setUint32(sampleRate);
+      setUint32(sampleRate * 2 * numOfChan);
+      setUint16(numOfChan * 2);
+      setUint16(16);
+
+      setUint32(0x61746164); // "data"
+      setUint32(length - pos - 4);
+
+      for (let i = 0; i < buffer.numberOfChannels; i++) {
+        channels.push(buffer.getChannelData(i));
+      }
+
+      while (offset < buffer.length) {
+        for (let i = 0; i < numOfChan; i++) {
+          let sample = Math.max(-1, Math.min(1, channels[i][offset]));
+          sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+          view.setInt16(pos, sample, true);
+          pos += 2;
+        }
+        offset++;
+      }
+
+      return new Blob([outBuffer], { type: 'audio/wav' });
+    }
+
+    function initAudioVisualizerCanvas() {
+      const canvas = document.getElementById('visualizerCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width = canvas.parentElement.clientWidth * window.devicePixelRatio;
+        canvas.height = canvas.parentElement.clientHeight * window.devicePixelRatio;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function draw() {
+        requestAnimationFrame(draw);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (!AppState.analyserNode || (!AppState.isRecording && !AppState.isPlaying)) {
+          ctx.lineWidth = 2 * window.devicePixelRatio;
+          ctx.strokeStyle = 'rgba(182, 255, 0, 0.2)';
+          ctx.beginPath();
+          const sliceWidth = canvas.width / 50;
+          let x = 0;
+          for (let i = 0; i < 50; i++) {
+            const y = canvas.height / 2 + Math.sin(i * 0.3 + Date.now() * 0.003) * 6 * window.devicePixelRatio;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+            x += sliceWidth;
+          }
+          ctx.stroke();
+          return;
+        }
+
+        const bufferLength = AppState.analyserNode.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        AppState.analyserNode.getByteFrequencyData(dataArray);
+
+        const barWidth = (canvas.width / bufferLength) * 2.5;
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          barHeight = (dataArray[i] / 255) * canvas.height * 0.85;
+
+          const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
+          gradient.addColorStop(0, '#22C55E');
+          gradient.addColorStop(0.5, '#8EFF00');
+          gradient.addColorStop(1, '#B6FF00');
+
+          ctx.fillStyle = gradient;
+          ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+
+          x += barWidth + 1;
+        }
+      }
+
+      draw();
+    }
+
+    async function checkAuthSession() {
+      const token = localStorage.getItem('vc_session_token');
+      if (!token) return;
+
+      try {
+        const res = await callBackendApi('validateSession', { token });
+        if (res && res.valid) {
+          AppState.currentUser = res.user;
+          AppState.sessionToken = token;
+          renderAuthUI();
+        } else if (!res.isLocalFallback) {
+          localStorage.removeItem('vc_session_token');
+        }
+      } catch(e) {}
+    }
+
+    async function fetchServerSettings() {
+      try {
+        const res = await callBackendApi('getAppSettings');
+        if (res && res.success && res.settings) {
+          applySettingsToUI(res.settings);
+        }
+      } catch(e) {}
+    }
+
+    function applySettingsToUI(s) {
+      if (s.footer_brand) document.getElementById('footerBrandTitle').textContent = s.footer_brand;
+      if (s.footer_desc) document.getElementById('footerDescText').textContent = s.footer_desc;
+      if (s.footer_copyright) document.getElementById('footerCopyrightText').textContent = s.footer_copyright;
+      if (s.footer_email) document.getElementById('footerEmailText').textContent = '📧 ' + s.footer_email;
+      if (s.footer_phone) document.getElementById('footerPhoneText').textContent = '📱 ' + s.footer_phone;
+      if (s.footer_address) document.getElementById('footerAddressText').textContent = '📍 ' + s.footer_address;
+
+      if (s.logo_url) {
+        const logoBoxes = [document.getElementById('navLogoContainer'), document.getElementById('adminLogoPreviewBox')];
+        logoBoxes.forEach(box => {
+          if (box) box.innerHTML = `<img src="${s.logo_url}" class="w-full h-full object-cover">`;
+        });
+      }
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const u = document.getElementById('loginUsername').value.trim();
+      const p = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.textContent = 'Memverifikasi...';
+      btn.disabled = true;
+
+      try {
+        const res = await callBackendApi('loginUser', { username: u, password: p });
+        btn.textContent = 'Masuk Sesi';
+        btn.disabled = false;
+
+        if (res && res.success) {
+          AppState.currentUser = res.user;
+          AppState.sessionToken = res.token;
+          localStorage.setItem('vc_session_token', res.token);
+          renderAuthUI();
+          closeLoginModal();
+          showToast(res.message, 'success');
+          if (res.user.role === 'Admin') navigateTo('admin');
+        } else {
+          // Safe Preview fallback if offline
+          if (res.isLocalFallback && u === 'admin' && p === '123') {
+            const user = { userId: 'ADM-01', username: 'admin', role: 'Admin', fullName: 'Super Administrator' };
+            AppState.currentUser = user;
+            AppState.sessionToken = 'PREVIEW-SESSION';
+            localStorage.setItem('vc_preview_user', JSON.stringify(user));
+            renderAuthUI();
+            closeLoginModal();
+            showToast('Login Safe Preview Berhasil!', 'success');
+            navigateTo('admin');
+          } else {
+            showToast(res ? res.message : 'Username/Password salah! Default: admin / 123', 'error');
+          }
+        }
+      } catch (err) {
+        btn.textContent = 'Masuk Sesi';
+        btn.disabled = false;
+        showToast('Error: ' + err.message, 'error');
+      }
+    }
+
+    function renderAuthUI() {
+      const container = document.getElementById('navAuthBtn');
+      if (!container) return;
+
+      if (AppState.currentUser) {
+        container.innerHTML = `
+          <div class="flex items-center gap-2">
+            ${AppState.currentUser.role === 'Admin' ? `
+              <button onclick="navigateTo('admin')" class="px-2.5 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 text-xs font-bold hover:bg-purple-500/30 transition">
+                ⚙️ Admin
+              </button>
+            ` : ''}
+            <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold transition">
+              Keluar
+            </button>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <button onclick="openLoginModal()" class="px-3 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 font-semibold text-xs transition text-white">
+            Masuk
+          </button>
+        `;
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        await callBackendApi('logoutUser', { token: AppState.sessionToken });
+      } catch(e) {}
+
+      localStorage.removeItem('vc_session_token');
+      localStorage.removeItem('vc_preview_user');
+      AppState.currentUser = null;
+      AppState.sessionToken = null;
+      renderAuthUI();
+      navigateTo('landing');
+      showToast('Anda telah keluar dari sesi.', 'info');
+    }
+
+    function openLoginModal() {
+      document.getElementById('loginModal').classList.remove('hidden');
+      document.getElementById('loginModal').classList.add('flex');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('loginModal').classList.remove('flex');
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        icon.textContent = '👁️';
+      }
+    }
+
+    function previewAndUploadLogo(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(evt) {
+        document.getElementById('adminLogoPreviewBox').innerHTML = `<img src="${evt.target.result}" class="w-full h-full object-cover">`;
+        try {
+          const res = await callBackendApi('updateAppLogo', {
+            token: AppState.sessionToken,
+            base64Data: evt.target.result,
+            fileName: file.name
+          });
+          if (res && res.success) showToast(res.message, 'success');
+          else showToast('Logo tersimpan di Safe Preview!', 'success');
+        } catch(e) {
+          showToast('Logo disimpan di Safe Preview!', 'success');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveFooterSettings() {
+      const payload = {
+        footer_brand: document.getElementById('inputFooterBrand').value,
+        footer_desc: document.getElementById('inputFooterDesc').value,
+        footer_phone: document.getElementById('inputFooterPhone').value,
+        footer_email: document.getElementById('inputFooterEmail').value,
+        footer_copyright: document.getElementById('inputFooterCopyright').value
+      };
+
+      try {
+        const res = await callBackendApi('updateFooterSettings', {
+          token: AppState.sessionToken,
+          footerData: payload
+        });
+        if (res && res.success) {
+          showToast(res.message, 'success');
+          fetchServerSettings();
+        } else {
+          applySettingsToUI(payload);
+          showToast('Konfigurasi footer tersimpan di Safe Preview!', 'success');
+        }
+      } catch(e) {
+        applySettingsToUI(payload);
+        showToast('Konfigurasi footer tersimpan di Safe Preview!', 'success');
+      }
+    }
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-950/95 border-emerald-500 text-emerald-200',
+        error: 'bg-red-950/95 border-red-500 text-red-200',
+        info: 'bg-slate-900/95 border-[#B6FF00] text-slate-100'
+      };
+
+      toast.className = `p-3.5 rounded-2xl border shadow-xl backdrop-blur-md text-xs font-semibold flex items-center justify-between pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 ${colors[type] || colors.info}`;
+      toast.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span>${type === 'success' ? '✅' : type === 'error' ? '⚠️' : '💡'}</span>
+          <span>${msg}</span>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-xs opacity-60 hover:opacity-100 ml-3">✕</button>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 20);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-full');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
