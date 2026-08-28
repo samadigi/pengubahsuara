@@ -1,75 +1,66 @@
-<!-- VOICE CHANGER AI - BLOGGER WRAPPER -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
 
-<div id="voice-app-wrapper">
-  <iframe
-    id="voice-app"
-    src="https://script.google.com/macros/s/AKfycbzNU1W_4-7dUnSLku3UopRVfrwcorZ4VaDY2Cd9a_I4M1SExTAywxGHMPm9iqlIgMHP/exec"
-    allow="microphone *; camera *; fullscreen *"
-    allowfullscreen
-    loading="eager"
-    referrerpolicy="strict-origin-when-cross-origin">
-  </iframe>
-</div>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
 
-<style>
-  /* HILANGKAN MARGIN/PADDING BLOGGER */
-  html,
-  body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    overflow-x: hidden !important;
-  }
+  <title>Voice Changer AI</title>
 
-  /* WRAPPER */
-  #voice-app-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    min-height: 650px;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden;
-    background: #05070d;
-  }
+  <meta
+    http-equiv="Permissions-Policy"
+    content="microphone=(self 'https://script.google.com' 'https://script.googleusercontent.com'), camera=(self 'https://script.google.com' 'https://script.googleusercontent.com'), geolocation=(self 'https://script.google.com' 'https://script.googleusercontent.com')"
+  >
 
-  /* IFRAME */
-  #voice-app {
-    display: block;
-    width: 100%;
-    height: 100%;
-    min-height: 650px;
-    border: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #05070d;
-  }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  /* MOBILE */
-  @media screen and (max-width: 768px) {
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #06080F;
+    }
 
-    #voice-app-wrapper {
+    .wrapper {
+      position: fixed;
+      inset: 0;
       width: 100%;
       height: 100dvh;
-      min-height: 600px;
+      overflow: hidden;
     }
 
-    #voice-app {
+    iframe {
+      display: block;
       width: 100%;
-      height: 100dvh;
-      min-height: 600px;
+      height: 100%;
+      border: 0;
+      margin: 0;
+      padding: 0;
     }
-  }
+  </style>
+</head>
 
-  /* HP KECIL */
-  @media screen and (max-width: 480px) {
+<body>
 
-    #voice-app-wrapper {
-      min-height: 100dvh;
-    }
+  <div class="wrapper">
 
-    #voice-app {
-      min-height: 100dvh;
-    }
-  }
-</style>
+    <iframe
+      src="https://script.google.com/macros/s/AKfycbzNU1W_4-7dUnSLku3UopRVfrwcorZ4VaDY2Cd9a_I4M1SExTAywxGHMPm9iqlIgMHP/exec"
+      allow="microphone; camera; geolocation; autoplay"
+      allowfullscreen
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
+
+  </div>
+
+</body>
+</html>
